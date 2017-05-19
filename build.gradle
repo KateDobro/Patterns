@@ -8,6 +8,8 @@ sourceCompatibility = 1.8
 
 mainClassName = "org.itstep.pps2701.Main"
 
+compileJava.options.encoding = 'UTF-8'
+
 repositories {
     mavenCentral()
 }

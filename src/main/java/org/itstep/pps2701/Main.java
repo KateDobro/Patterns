@@ -4,21 +4,18 @@ import org.itstep.pps2701.task1.Article;
 import org.itstep.pps2701.task1.ArticleBuilder;
 import org.itstep.pps2701.task1.ArticleService;
 import org.itstep.pps2701.task1.ArticleTxtBuilder;
-import org.itstep.pps2701.task2.AbstractGrantState;
 import org.itstep.pps2701.task2.Grant;
 import org.itstep.pps2701.task3.City;
 import org.itstep.pps2701.task3.Country;
 import org.itstep.pps2701.task3.Region;
+import org.itstep.pps2701.ui.MainFrame;
 import org.w3c.dom.Document;
 
-/**
- * Created by dk on 17.05.17.
- */
 public class Main {
 
     public static void main(String[] args) {
 
-        task3();
+        new MainFrame();
     }
 
     private static void task1(){

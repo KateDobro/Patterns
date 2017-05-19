@@ -11,9 +11,6 @@ import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 import java.io.File;
 
-/**
- * Created by dk on 17.05.17.
- */
 public class ArticleService {
 
     public Document toXml(Article article){
@@ -23,7 +20,6 @@ public class ArticleService {
             DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
             DocumentBuilder docBuilder = docFactory.newDocumentBuilder();
 
-            // root elements
             doc = docBuilder.newDocument();
             Element rootElement = doc.createElement("ARTICLE");
             doc.appendChild(rootElement);

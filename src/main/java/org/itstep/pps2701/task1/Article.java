@@ -1,8 +1,5 @@
 package org.itstep.pps2701.task1;
 
-/**
- * Created by dk on 17.05.17.
- */
 public class Article {
     private String header=null;
     private String authors=null;
