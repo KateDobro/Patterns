@@ -26,62 +26,49 @@ import java.io.*;
 
 public class BuilderTab extends JPanel{
 
-    private JTextArea txtAreaTxtFile;
-    private JTextArea txtAreaXmlFile;
-
     private String strFileSource = "";
+    private String strFileDest = "";
+
+    private JTextArea taSourceFile;
+    private JTextArea taDestFile;
 
     public BuilderTab() {
         buildTabPanelBuilder();
     }
 
     private void buildTabPanelBuilder() {
-        setLayout(new FlowLayout());
+        this.setLayout(new GridLayout(5,1));
 
-        JButton btnFileChooser = new JButton("Выбрать файл");
+        JButton btnFileSourceChooser = new JButton("Выбрать файл");
+        JButton btnFileDestChooser = new JButton("Выбрать путь для сохранения");
         JButton btnConvertToXml = new JButton("Конвертировать в XML");
 
-        JLabel lblTxtAreaTxtFile = new JLabel("Текстовый файл", SwingConstants.CENTER);
-        JLabel lblTxtAreaXmlFile = new JLabel("XML файл", SwingConstants.CENTER);
+        JLabel lblSourceFile = new JLabel("Путь к файлу:");
+        taSourceFile = new JTextArea();
 
-        txtAreaTxtFile = new JTextArea(25,43);
-        txtAreaXmlFile = new JTextArea(25,43);
+        JLabel lblDestFile = new JLabel("Путь для сохранения файла:");
+        taDestFile = new JTextArea();
 
-        JScrollPane scrollPaneTxt = new JScrollPane(txtAreaTxtFile);
-        JScrollPane scrollPaneXml = new JScrollPane(txtAreaXmlFile);
+        taSourceFile.setEditable(false);
+        taDestFile.setEditable(false);
 
-        btnFileChooser.setPreferredSize(new Dimension(1000,25));
-        btnConvertToXml.setPreferredSize(new Dimension(1000,25));
-
-        lblTxtAreaTxtFile.setPreferredSize(new Dimension(482,25));
-        lblTxtAreaXmlFile.setPreferredSize(new Dimension(482,25));
-
-        txtAreaTxtFile.setEditable(false);
-        txtAreaXmlFile.setEditable(false);
-        txtAreaTxtFile.setLineWrap(true);
-        txtAreaXmlFile.setLineWrap(true);
-        txtAreaTxtFile.setWrapStyleWord(true);
-        txtAreaXmlFile.setWrapStyleWord(true);
-
-        scrollPaneTxt.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
-        scrollPaneXml.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
-
-        btnFileChooser.addActionListener(b -> getTxtFile());
-        btnConvertToXml.addActionListener(b -> convertToXml(strFileSource));
+        btnFileSourceChooser.addActionListener(b -> getFileSourceDir());
+        btnFileDestChooser.addActionListener(b -> getFileDestDir());
+        btnConvertToXml.addActionListener(b -> convertToXml(strFileSource, strFileDest));
 
         JPanel btnPanel = new JPanel(new BorderLayout());
-        btnPanel.add(btnFileChooser, BorderLayout.NORTH);
+        btnPanel.add(btnFileSourceChooser, BorderLayout.NORTH);
+        btnPanel.add(btnFileDestChooser, BorderLayout.CENTER);
         btnPanel.add(btnConvertToXml, BorderLayout.SOUTH);
 
         this.add(btnPanel);
-        this.add(lblTxtAreaTxtFile);
-        this.add(lblTxtAreaXmlFile);
-        this.add(scrollPaneTxt);
-        this.add(scrollPaneXml);
+        this.add(lblSourceFile);
+        this.add(taSourceFile);
+        this.add(lblDestFile);
+        this.add(taDestFile);
     }
 
-
-    private void getTxtFile(){
+    private void getFileSourceDir(){
         JFileChooser fileChooser = new JFileChooser();
 
         String userDir = System.getProperty("user.home");
@@ -93,22 +80,35 @@ public class BuilderTab extends JPanel{
 
         if(ret == JFileChooser.APPROVE_OPTION){
             File file = fileChooser.getSelectedFile();
-            try {
-                readFileTo(file, txtAreaTxtFile);
-                strFileSource = file.getPath();
-            }catch (Exception ex){
-                System.out.println("getTxtFile error");
-                ex.printStackTrace();
-            }
+            strFileSource = file.getPath();
+            taSourceFile.setText(strFileSource);
         }
     }
 
+    private void getFileDestDir() {
+        JFileChooser fileChooser = new JFileChooser();
 
-    private void convertToXml(String source) {
+        String userDir = System.getProperty("user.home");
+
+        fileChooser.setCurrentDirectory(new File(userDir +"/Desktop"));
+        fileChooser.setDialogType(JFileChooser.SAVE_DIALOG);
+        fileChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+
+        int ret = fileChooser.showDialog(null,"Выбрать папку");
+
+        if(ret == JFileChooser.APPROVE_OPTION){
+            File file = fileChooser.getSelectedFile();
+            strFileDest = file.getPath();
+            taDestFile.setText(strFileDest);
+        }
+    }
+
+    private void convertToXml(String source, String destination) {
 
         if(!source.isEmpty()){
-            String userDir = System.getProperty("user.home");
-            String fileName = userDir +"/Desktop/convertedXML.xml";
+
+            String fileName = destination + "convertedXML.xml";
+
 
             ArticleBuilder builder = new ArticleTxtBuilder();
             ArticleService service = new ArticleService();
@@ -123,8 +123,7 @@ public class BuilderTab extends JPanel{
             }
 
             if(savedFile != null){
-                showOkDialog(savedFile.getPath());
-                readFileTo(savedFile, txtAreaXmlFile);
+                createOkDialog(savedFile.getPath());
             }
 
         } else {
@@ -133,19 +132,7 @@ public class BuilderTab extends JPanel{
 
     }
 
-    private void readFileTo(File file, JTextArea txtArea){
-        try {
-            FileReader reader = new FileReader(file);
-            BufferedReader br = new BufferedReader(reader);
-            txtArea.read( br, null );
-            br.close();
-        } catch (Exception ex){
-            ex.printStackTrace();
-            System.out.println("error line 143");
-        }
-    }
-
-    private void showOkDialog(String filePath){
+    private void createOkDialog(String filePath){
         JDialog okDialog = new JDialog();
         okDialog.setTitle("Успех!");
         okDialog.setSize(100,150);
@@ -172,7 +159,6 @@ public class BuilderTab extends JPanel{
         okDialog.setVisible(true);
 
     }
-
 
     private void createErrorDialog(){
         JDialog errDialog = new JDialog();
