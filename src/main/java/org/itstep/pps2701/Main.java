@@ -13,9 +13,6 @@ import org.w3c.dom.Document;
 
 public class Main {
 
-    // test test
-    // test test
-    // test test
     public static void main(String[] args) {
 
         new MainFrame();
